@@ -1,0 +1,1429 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f6f8;
+  color: #1f2933;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  height: 100vh;
+  padding: 24px 16px;
+  background: #18212f;
+  color: white;
+  position: sticky;
+  top: 0;
+}
+
+.brand {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 28px;
+}
+
+.brand span {
+  color: #b8c4d6;
+  font-size: 13px;
+}
+
+.menu {
+  display: grid;
+  gap: 8px;
+}
+
+.menu-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: #dce5f2;
+}
+
+.menu-item.active,
+.menu-item:hover {
+  background: #2c7be5;
+  color: white;
+}
+
+.main-content {
+  flex: 1;
+  padding: 32px;
+}
+
+.tab {
+  display: none;
+}
+
+.tab.active {
+  display: block;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0 0 6px;
+}
+
+.page-header p {
+  margin: 0;
+  color: #607086;
+}
+
+.toolbar,
+.employee-form,
+.vacation-search {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 16px;
+  align-items: end;
+  background: white;
+  padding: 18px;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+.vacation-search {
+  grid-template-columns: repeat(5, minmax(130px, 1fr)) auto;
+  border-color: #c8d1de;
+}
+
+.employee-form {
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+}
+
+.test-mode-switch {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+}
+
+.test-mode-switch input {
+  width: auto;
+  margin: 0;
+}
+
+.form-section {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 14px;
+  grid-column: 1 / -1;
+  padding: 16px;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+}
+
+.form-section legend {
+  padding: 0 8px;
+  font-weight: 700;
+  color: #607086;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #c8d1de;
+  border-radius: 6px;
+  font: inherit;
+}
+
+button {
+  padding: 11px 14px;
+  background: #2c7be5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.secondary-button {
+  background: #e8edf5;
+  color: #243447;
+}
+
+.danger-button {
+  background: #dc3545;
+}
+
+.form-actions,
+.row-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.results,
+.employee-list {
+  display: grid;
+  gap: 12px;
+}
+
+.sheet-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.sheet-links button {
+  width: auto;
+  background: #e8edf5;
+  color: #243447;
+}
+
+.sheet-links button.active {
+  background: #2c7be5;
+  color: white;
+}
+
+.card,
+.employee-row {
+  background: white;
+  padding: 18px;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.employee-row {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.2fr) minmax(260px, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.card-header h3 {
+  margin: 0 0 4px;
+}
+
+.card-header span,
+.employee-row span {
+  display: block;
+  color: #607086;
+  font-size: 13px;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.metrics p {
+  margin: 0;
+  padding: 12px;
+  background: #f7f9fc;
+  border-radius: 6px;
+}
+
+.metrics span {
+  display: block;
+  color: #607086;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 8px 16px;
+  margin-top: 14px;
+  color: #607086;
+  font-size: 14px;
+}
+
+.details-grid p {
+  margin: 0;
+}
+
+.bank-hours,
+.status {
+  margin: 14px 0 0;
+  color: #607086;
+}
+
+.error {
+  color: #b42318;
+}
+
+.saved {
+  color: #0f7a3b;
+}
+
+.sheet-documents {
+  display: grid;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.vacation-receipt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.download-button,
+.vacation-receipt-actions button,
+.vacation-receipt-head a,
+.vacation-receipt-head button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #2c7be5;
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.vacation-receipt-page {
+  width: 100%;
+  max-width: 900px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 26px;
+  background: white;
+  border: 1px solid #d8e0ec;
+  border-radius: 8px;
+}
+
+.vacation-receipt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e1e6ef;
+}
+
+.vacation-receipt-head strong {
+  font-size: 22px;
+}
+
+.vacation-receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 14px;
+  align-items: stretch;
+  margin-top: 18px;
+}
+
+.vacation-receipt-grid p {
+  display: flex;
+  min-height: 64px;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  padding: 12px;
+  background: #f7f9fc;
+  border: 1px solid #e1e6ef;
+  border-radius: 6px;
+}
+
+.vacation-receipt-grid strong,
+.vacation-receipt-grid span {
+  display: block;
+}
+
+.vacation-receipt-grid strong {
+  margin-bottom: 5px;
+  color: #607086;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.timesheet-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 26px 34px;
+  background: white;
+  border: 1px solid #1f2933;
+  color: #000;
+  page-break-after: always;
+}
+
+.timesheet-title {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  align-items: center;
+  background: #4f7ee8;
+  border: 2px solid #000;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.timesheet-title span {
+  border-left: 1px solid #000;
+  padding: 4px;
+}
+
+.timesheet-employee {
+  display: grid;
+  grid-template-columns: 110px 1fr 130px 180px;
+  margin: 12px 0;
+  border: 2px solid #000;
+  background: #ffff91;
+  font-size: 14px;
+  text-align: center;
+}
+
+.timesheet-employee strong,
+.timesheet-employee span {
+  padding: 5px 8px;
+}
+
+.model-page .timesheet-employee {
+  grid-template-columns: 150px 1fr;
+}
+
+.timesheet-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: center;
+}
+
+.timesheet-table th,
+.timesheet-table td {
+  border: 2px solid #000;
+  padding: 2px 4px;
+}
+
+.timesheet-table th {
+  background: #f3f4f6;
+}
+
+.timesheet-footer {
+  display: block;
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.timesheet-footer p {
+  display: grid;
+  grid-template-columns: 145px 190px;
+  justify-content: start;
+  gap: 28px;
+  margin: 4px 0;
+}
+
+.timesheet-footer p strong {
+  white-space: nowrap;
+}
+
+.timesheet-footer p span {
+  text-align: right;
+}
+
+.payroll-lines {
+  min-width: 0;
+  width: max-content;
+}
+
+.extras-line {
+  display: grid;
+  grid-template-columns: 110px 190px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.extra-pills {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.extra-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 24px;
+  padding: 2px 8px;
+  background: #91d650;
+  font-weight: 400;
+}
+
+.extra-pill b {
+  font-weight: 700;
+}
+
+.extra-total {
+  position: relative;
+  z-index: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.highlight-total span {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  background: #ffde00;
+  border: 2px solid #000;
+}
+
+.model-sheet-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 14px;
+  margin-top: 26px;
+  align-items: start;
+}
+
+.non-working-row {
+  font-weight: 700;
+}
+
+.model-bottom {
+  margin-top: 20px;
+}
+
+.code-legend {
+  display: grid;
+  grid-template-columns: 180px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.code-legend span {
+  padding: 3px 8px;
+  border: 1px solid #000;
+}
+
+.code-1 {
+  background: #fff980;
+}
+
+.code-2 {
+  background: #ffb87e;
+}
+
+.code-3 {
+  background: #7fff7f;
+}
+
+.code-4 {
+  background: #d9d2e9;
+}
+
+.code-5 {
+  background: #7cf2ff;
+}
+
+.code-6 {
+  background: #ff7d7d;
+}
+
+.code-7 {
+  background: #DCD0FF;
+}
+
+.holiday-code {
+  background: #77653dc7;
+  color: #111827;
+}
+
+.timesheet-table .holiday-row td {
+  background: #77653dc7;
+}
+
+.timesheet-table .code-row.code-1 td {
+  background: #fff980;
+}
+
+.timesheet-table .code-row.code-2 td {
+  background: #ffb87e;
+}
+
+.timesheet-table .code-row.code-3 td {
+  background: #7fff7f;
+}
+
+.timesheet-table .code-row.code-4 td {
+  background: #d9d2e9;
+}
+
+.timesheet-table .code-row.code-5 td {
+  background: #7cf2ff;
+}
+
+.timesheet-table .code-row.code-6 td {
+  background: #ff7d7d;
+}
+
+.timesheet-table .code-row.code-7 td {
+  background: #DCD0FF;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 2px solid #000;
+  padding: 4px 8px;
+}
+
+.summary-table th {
+  text-align: center;
+}
+
+.summary-table td {
+  width: 190px;
+  background: #ffd31a;
+  text-align: right;
+}
+
+.summary-total th {
+  font-weight: 900;
+}
+
+.signature {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 320px;
+  margin: 18px 0 0 auto;
+  text-align: center;
+  font-weight: 700;
+}
+
+.signature span:first-child {
+  white-space: nowrap;
+}
+
+.signature-line {
+  width: 100%;
+  border-top: 1px solid #000;
+  margin-top: 8px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.56);
+  overflow: auto;
+}
+
+.modal.active {
+  display: block;
+}
+
+.modal-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.small-modal {
+  max-width: 480px;
+}
+
+.pay-hours-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.pay-hours-action button {
+  width: auto;
+}
+
+.pay-hours-observacao {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  max-width: 420px;
+}
+
+.pay-hours-observacao label {
+  font-size: 0.95rem;
+}
+
+.pay-hours-observacao textarea {
+  width: 100%;
+  min-height: 52px;
+  resize: vertical;
+  padding: 8px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  line-height: 1.3;
+}
+
+.summary-observacao-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.right-column-observacao {
+  width: 320px;
+  min-width: 240px;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.payment-summary {
+  display: grid;
+  gap: 10px;
+}
+
+.payment-summary p,
+.payment-hours-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid #e1e6ef;
+}
+
+.payment-hours-field input {
+  max-width: 140px;
+  text-align: right;
+}
+
+.payment-total {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.discount-head,
+.discount-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(120px, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+
+.discount-head {
+  padding: 0 12px 8px;
+  color: #607086;
+  font-size: 13px;
+}
+
+.discount-list {
+  display: grid;
+  gap: 10px;
+}
+
+.discount-row {
+  padding: 12px;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+}
+
+.discount-row span {
+  display: block;
+  color: #607086;
+  font-size: 13px;
+}
+
+.benefit-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 12px;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.benefit-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.benefit-switch span {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  transition: background 0.2s ease;
+}
+
+.benefit-switch span::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.benefit-switch input:checked + span {
+  background: #2563eb;
+}
+
+.benefit-switch input:focus-visible + span {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.benefit-switch input:checked + span::after {
+  transform: translateX(20px);
+}
+
+.benefit-switch strong {
+  font-size: 14px;
+  color: #243447;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.vacation-panel,
+.vacation-table-wrap {
+  background: white;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+.vacation-panel {
+  padding: 18px;
+}
+
+.vacation-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.vacation-panel-head h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.vacation-panel-head button {
+  width: auto;
+}
+
+.vacation-checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.vacation-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #e1e6ef;
+  border-radius: 6px;
+  background: #f7f9fc;
+  cursor: pointer;
+}
+
+.vacation-check input {
+  width: auto;
+}
+
+.vacation-check span {
+  overflow-wrap: anywhere;
+}
+
+.vacation-table-wrap {
+  overflow: visible;
+}
+
+.vacation-mode-switch {
+  display: inline-flex;
+  gap: 6px;
+  margin: 0 0 16px;
+  padding: 4px;
+  background: #e8edf5;
+  border-radius: 8px;
+}
+
+.vacation-mode-switch button {
+  min-height: 36px;
+  padding: 8px 14px;
+  background: transparent;
+  color: #243447;
+  border-radius: 6px;
+}
+
+.vacation-mode-switch button.active {
+  background: #2c7be5;
+  color: white;
+}
+
+.vacation-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 780px;
+}
+
+.vacation-table th,
+.vacation-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e1e6ef;
+  text-align: left;
+}
+
+.vacation-table th {
+  position: relative;
+  background: #f7f9fc;
+  color: #243447;
+}
+
+.vacation-table td:not(:first-child),
+.vacation-table th:not(:first-child) {
+  text-align: right;
+}
+
+.empty-cell {
+  color: #607086;
+  text-align: center !important;
+}
+
+.vacation-days-column,
+.vacation-days-cell {
+  width: 64px;
+  white-space: nowrap;
+}
+
+.vacation-days-cell {
+  color: #243447;
+  font-weight: 800;
+}
+
+.vacation-return-cell {
+  color: #0f766e;
+  font-weight: 800;
+}
+
+.vacation-select-toggle,
+.vacation-date-button {
+  width: auto;
+}
+
+.vacation-select-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 190px;
+  padding: 9px 12px;
+  background: white;
+  color: #243447;
+  border: 1px solid #c8d1de;
+  border-radius: 6px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.vacation-select-toggle::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #607086;
+  border-bottom: 2px solid #607086;
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.vacation-select-toggle:hover,
+.vacation-select-toggle:focus-visible {
+  border-color: #2c7be5;
+  box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.12);
+}
+
+.vacation-select-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 10px;
+  z-index: 6;
+  width: min(340px, 80vw);
+  max-height: 320px;
+  overflow: auto;
+  padding: 10px;
+  background: white;
+  border: 1px solid #c8d1de;
+  border-radius: 8px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+}
+
+.vacation-select-menu.active {
+  display: grid;
+  gap: 8px;
+}
+
+.vacation-select-menu .vacation-check {
+  min-height: 36px;
+  padding: 8px 10px;
+}
+
+.vacation-editor-row td {
+  background: #fbfcfe;
+  text-align: left !important;
+}
+
+.vacation-inline-editor {
+  margin-bottom: 18px;
+}
+
+.vacation-editor-actions {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.vacation-editor-actions button {
+  min-height: 42px;
+}
+
+.vacation-editor-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.calendar-panel {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e1e6ef;
+}
+
+.vacation-year-control {
+  max-width: 220px;
+  margin: 0 0 18px;
+}
+
+.vacation-calendars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.vacation-month {
+  background: white;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.vacation-month h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+
+.vacation-weekdays,
+.vacation-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(38px, 1fr));
+  gap: 6px;
+}
+
+.vacation-weekdays {
+  margin-bottom: 8px;
+  color: #607086;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.vacation-calendar button,
+.vacation-empty {
+  min-height: 46px;
+  border-radius: 6px;
+}
+
+.vacation-calendar button {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  background: #f7f9fc;
+  color: #243447;
+  border: 1px solid #e1e6ef;
+}
+
+.vacation-calendar button span {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.vacation-calendar button:hover {
+  border-color: #2c7be5;
+}
+
+.vacation-calendar .weekend {
+  background: #eef2f7;
+  color: #607086;
+}
+
+.vacation-calendar .saved-range {
+  box-shadow: inset 0 0 0 2px #89c2ff;
+}
+
+.vacation-calendar .selected-range {
+  background: #d9ecff;
+  border-color: #8bc4ff;
+}
+
+.vacation-calendar .selected-start,
+.vacation-calendar .selected-end {
+  background: #2c7be5;
+  color: white;
+  border-color: #2c7be5;
+}
+
+.vacation-calendar .return-day {
+  background: #0f766e;
+  color: white;
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
+}
+
+.calendar-panel h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.calendar-panel p {
+  margin: 0 0 14px;
+  color: #607086;
+}
+
+.work-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(82px, 1fr));
+  gap: 8px;
+}
+
+.work-calendar button {
+  display: grid;
+  gap: 3px;
+  min-height: 58px;
+  padding: 8px;
+  border-radius: 6px;
+  color: #102033;
+}
+
+.work-calendar .workday {
+  background: #a8e6a1;
+}
+
+.work-calendar .offday {
+  background: #f6a0a0;
+}
+
+.work-calendar .national-holiday {
+  border: 2px solid #77653d;
+}
+
+.work-calendar .manual-adjustment {
+  box-shadow: inset 0 0 0 2px #111827;
+}
+
+.work-calendar span {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.work-calendar small {
+  overflow: hidden;
+  font-size: 10px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 9mm;
+  }
+
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .sidebar,
+  .toolbar,
+  .secondary-button,
+  .menu,
+  .modal,
+  .pay-hours-action,
+  .vacation-receipt-actions,
+  .vacation-receipt-head a,
+  .vacation-receipt-head button,
+  .results,
+  .sheet-links,
+  .page-header {
+    display: none !important;
+  }
+
+  .app-layout,
+  .main-content {
+    display: block;
+    padding: 0;
+  }
+
+  body {
+    background: white;
+  }
+
+  .sheet-documents {
+    display: block;
+  }
+
+  .timesheet-page {
+    width: 188mm;
+    max-width: none;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 2mm 2mm;
+    border: none;
+    overflow: visible;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .timesheet-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .vacation-receipt-page {
+    width: 188mm;
+    max-width: none;
+    margin: 0 auto;
+    padding: 8mm;
+    border: none;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .vacation-receipt-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .vacation-receipt-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .timesheet-title {
+    grid-template-columns: 1fr 120px;
+    font-size: 13px;
+  }
+
+  .timesheet-title strong,
+  .timesheet-title span,
+  .timesheet-employee strong,
+  .timesheet-employee span {
+    padding: 4px 5px;
+  }
+
+  .timesheet-employee {
+    grid-template-columns: 72px 1fr 96px 96px;
+    margin: 6px 0;
+    font-size: 12px;
+  }
+
+  .model-page .timesheet-employee {
+    grid-template-columns: 128px 1fr;
+  }
+
+  .timesheet-table {
+    font-size: 10px;
+  }
+
+  .timesheet-table th,
+  .timesheet-table td {
+    border-width: 1px;
+    padding: 1px 1px;
+    line-height: 1.25;
+  }
+
+  .model-sheet-grid {
+    grid-template-columns: minmax(0, 1fr) 32mm;
+    gap: 4mm;
+    margin-top: 6px;
+  }
+
+  .timesheet-footer {
+    margin-top: 8px;
+    font-size: 11px;
+  }
+
+  .timesheet-footer p {
+    grid-template-columns: 28mm 25mm;
+    gap: 7mm;
+    margin: 2px 0;
+  }
+
+  .payroll-lines {
+    min-width: 0;
+    width: max-content;
+  }
+
+  .extras-line {
+    grid-template-columns: 74px 62px minmax(0, 1fr);
+    gap: 4px;
+    margin: 2px 0;
+  }
+
+  .extra-pills {
+    gap: 6px;
+    row-gap: 3px;
+  }
+
+  .extra-pill,
+  .highlight-total span {
+    padding: 1px 4px;
+  }
+
+  .extra-pill {
+    gap: 5px;
+    min-height: 18px;
+  }
+
+  .signature {
+    gap: 3px;
+    width: 68mm;
+    margin-top: 6mm;
+  }
+
+  .signature-line {
+    margin-top: 3mm;
+  }
+
+  .model-bottom {
+    margin-top: 8px;
+  }
+
+  .code-legend {
+    grid-template-columns: 32mm;
+    font-size: 10px;
+  }
+
+  .code-legend span {
+    padding: 2px 4px;
+  }
+
+  .summary-table {
+    font-size: 10px;
+  }
+
+  .summary-table th,
+  .summary-table td {
+    border-width: 1px;
+    padding: 2px 4px;
+  }
+
+  .summary-table td {
+    width: 120px;
+  }
+}
+
+@media (max-width: 800px) {
+  .app-layout,
+  .page-header,
+  .card-header,
+  .employee-row {
+    display: block;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    height: auto;
+    position: static;
+  }
+
+  .toolbar,
+  .employee-form,
+  .vacation-search,
+  .vacation-calendars,
+  .form-section,
+  .metrics,
+  .details-grid,
+  .discount-head,
+  .discount-row,
+  .work-calendar {
+    grid-template-columns: 1fr;
+  }
+
+  .main-content {
+    padding: 18px;
+  }
+}

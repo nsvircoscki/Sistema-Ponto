@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <strong>SIS Ponto</strong>
+        <span>Folha e funcionários</span>
+      </div>
+
+      <nav class="menu">
+        <button class="menu-item active" type="button" data-tab="folha" onclick="abrirAba('folha')">
+          Folha
+        </button>
+        <button class="menu-item" type="button" data-tab="funcionarios" onclick="abrirAba('funcionarios')">
+          Funcionários
+        </button>
+        <button class="menu-item" type="button" data-tab="ferias" onclick="abrirAba('ferias')">
+          Férias
+        </button>
+        <button class="menu-item" type="button" data-tab="historico" onclick="abrirAba('historico')">
+          Histórico
+        </button>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <section id="aba-folha" class="tab active">
+        <div class="page-header">
+          <div>
+            <h1>Folha de Pagamento</h1>
+            <p>Gere a folha por mês e ano usando os registros da planilha.</p>
+          </div>
+          <button class="secondary-button" type="button" onclick="imprimir()">Imprimir</button>
+          <button class="secondary-button" type="button" onclick="salvarPdfFolhaPonto()">Salvar PDF</button>
+          <button class="secondary-button" type="button" onclick="salvarFolhaAtual()">Salvar</button>
+        </div>
+
+        <div class="toolbar">
+          <label>
+            Mês
+            <select id="mes" onchange="atualizarModoGeracao()">
+              <option value="ferias">Férias</option>
+              <option value="quitacao-ferias">Quitação de Férias</option>
+              <option value="decimo-terceiro-1">1ª Parcela do Décimo Terceiro</option>
+              <option value="decimo-terceiro-2">2ª Parcela do Décimo Terceiro</option>
+              <option value="1">Janeiro</option>
+              <option value="2">Fevereiro</option>
+              <option value="3">Março</option>
+              <option value="4">Abril</option>
+              <option value="5">Maio</option>
+              <option value="6">Junho</option>
+              <option value="7">Julho</option>
+              <option value="8">Agosto</option>
+              <option value="9">Setembro</option>
+              <option value="10">Outubro</option>
+              <option value="11">Novembro</option>
+              <option value="12">Dezembro</option>
+            </select>
+          </label>
+
+          <label>
+            Ano
+            <input type="number" id="ano">
+          </label>
+
+          <button id="botaoGerarFolha" type="button" onclick="gerarFolha()">Gerar Folha</button>
+        </div>
+
+        <div id="linksFolha" class="sheet-links"></div>
+        <div id="resultado" class="results"></div>
+        <div id="folhaDocumentos" class="sheet-documents"></div>
+      </section>
+
+      <section id="aba-funcionarios" class="tab">
+        <div class="page-header">
+          <div>
+            <h1>Funcionários</h1>
+            <p>Configure salário, tipo de pagamento e banco de horas.</p>
+          </div>
+        </div>
+
+        <form class="employee-form" onsubmit="salvarFuncionario(event)">
+          <input type="hidden" id="funcionarioOriginalEmail">
+
+          <label>
+            Email
+            <input type="email" id="funcionarioEmail" required placeholder="nome@empresa.com">
+          </label>
+
+          <label>
+            Funcionario
+            <input type="text" id="funcionarioCodigo" placeholder="Codigo do funcionario">
+          </label>
+
+          <label>
+            Nome
+            <input type="text" id="funcionarioNome" placeholder="Nome do funcionario">
+          </label>
+
+          <label>
+            Cargo/Função
+            <input type="text" id="funcionarioCargo" placeholder="Cargo ou função">
+          </label>
+
+          <label>
+            Tipo
+            <select id="funcionarioTipo">
+              <option value="mensalista">Mensalista</option>
+              <option value="horista">Horista</option>
+            </select>
+          </label>
+
+          <label>
+            Salario ou valor hora
+            <input type="number" id="funcionarioSalario" min="0" step="0.01" required>
+          </label>
+
+          <label>
+            Banco de horas atual
+            <input type="number" id="funcionarioBancoHoras" step="0.01" value="0">
+          </label>
+
+          <fieldset class="form-section">
+            <legend>Extras</legend>
+
+            <label>
+              Abono
+              <input type="number" id="funcionarioAbono" min="0" step="0.01" value="0">
+            </label>
+
+            <label>
+              Vale Alimentação
+              <input type="number" id="funcionarioValeAlimentacao" min="0" step="0.01" value="0">
+            </label>
+
+            <label>
+              Vale Transporte
+              <input type="number" id="funcionarioValeTransporte" min="0" step="0.01" value="0">
+            </label>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit">Salvar</button>
+            <button class="secondary-button" type="button" onclick="limparFormularioFuncionario()">Limpar</button>
+          </div>
+        </form>
+
+        <div class="vacation-mode-switch">
+          <button id="modoFuncionariosAtivosBotao" class="active" type="button" onclick="alternarModoFuncionarios('ativos')">Ativos</button>
+          <button id="modoFuncionariosInativosBotao" type="button" onclick="alternarModoFuncionarios('inativos')">Inativos</button>
+        </div>
+
+        <div id="listaFuncionarios" class="employee-list"></div>
+      </section>
+
+      <section id="aba-ferias" class="tab">
+        <div class="page-header">
+          <div>
+            <h1>Férias</h1>
+            <p>Planeje os períodos de dezembro e janeiro com preenchimento automático.</p>
+          </div>
+        </div>
+
+        <div class="vacation-mode-switch">
+          <button id="modoFeriasBotao" class="active" type="button" onclick="alternarModoTabelaFerias('ferias')">Férias</button>
+          <button id="modoQuitacaoFeriasBotao" type="button" onclick="alternarModoTabelaFerias('quitacao')">Quitação das Férias</button>
+        </div>
+
+        <div class="toolbar vacation-year-toolbar">
+          <label>
+            Ano das férias
+            <input type="number" id="feriasAnoReferencia" min="2000" max="2100" onchange="alterarAnoFerias()">
+          </label>
+        </div>
+
+        <div class="vacation-table-wrap">
+          <table class="vacation-table">
+            <thead>
+              <tr>
+                <th>
+                  <button class="vacation-select-toggle" type="button" onclick="alternarMenuFerias()">Funcionários</button>
+                  <div id="feriasFuncionarios" class="vacation-select-menu"></div>
+                </th>
+                <th>Saldo</th>
+                <th>Terço</th>
+                <th>Total</th>
+                <th>Ida</th>
+                <th class="vacation-days-column">Dias</th>
+                <th>Volta</th>
+                <th>Retorno</th>
+              </tr>
+            </thead>
+            <tbody id="feriasTabelaFuncionarios"></tbody>
+          </table>
+        </div>
+        <div id="statusFerias" class="results"></div>
+      </section>
+
+      <section id="aba-historico" class="tab">
+        <div class="page-header">
+          <div>
+            <h1>Histórico</h1>
+            <p>Consulte folhas ponto salvas por mês.</p>
+          </div>
+        </div>
+
+        <div id="listaHistorico" class="employee-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modalDescontos" class="modal">
+    <div class="modal-content">
+      <div class="page-header">
+        <div>
+          <h1>Descontos</h1>
+          <p>Preencha os descontos antes de salvar a folha.</p>
+        </div>
+        <button class="secondary-button" type="button" onclick="fecharDescontosImpressao()">Fechar</button>
+      </div>
+
+      <div class="discount-head">
+        <strong>Funcionário</strong>
+        <strong>Sesi</strong>
+        <strong>Vale</strong>
+        <strong>Outros</strong>
+      </div>
+
+      <div id="descontosFuncionarios" class="discount-list"></div>
+
+      <label class="benefit-switch">
+        <input id="desativarAjustesBeneficios" type="checkbox" onchange="alternarAjustesBeneficios()">
+        <span></span>
+        <strong>Desativar descontos e adicionais automáticos de VA/VT</strong>
+      </label>
+
+      <label class="benefit-switch">
+        <input id="editarBancoHorasFuncionarios" type="checkbox" onchange="alternarEdicaoBancoHoras()">
+        <span></span>
+        <strong>Editar o banco de horas funcionários</strong>
+      </label>
+
+      <div class="calendar-panel">
+        <div>
+          <h2>Calendário do mês</h2>
+          <p>Dias uteis ficam verdes. Clique em um dia para marcar como nao útil/feriado ou marcar como útil</p>
+        </div>
+        <div id="calendarioUtil" class="work-calendar"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-button" type="button" onclick="fecharDescontosImpressao()">Cancelar</button>
+        <button id="botaoSalvarDescontos" type="button" onclick="salvarDescontosModal()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalPagamentoHoras" class="modal">
+    <div class="modal-content small-modal">
+      <div class="page-header">
+        <div>
+          <h1>Pagar horas</h1>
+          <p>Confira o valor antes de lançar o pagamento.</p>
+        </div>
+      </div>
+
+      <input type="hidden" id="pagamentoHorasEmail">
+      <input type="hidden" id="pagamentoHorasValorBase">
+
+      <div class="payment-summary">
+        <p><strong>Saldo do mes</strong><span id="pagamentoHorasSaldo">0h</span></p>
+        <label class="payment-hours-field">
+          <strong>Horas a lancar</strong>
+          <input type="number" id="pagamentoHorasQuantidade" step="0.01" oninput="atualizarTotalPagamentoHoras()">
+        </label>
+        <p><strong>Valor da hora</strong><span id="pagamentoHorasValor">R$ 0,00</span></p>
+        <p class="payment-total"><strong>Total</strong><span id="pagamentoHorasTotal">R$ 0,00</span></p>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-button" type="button" onclick="fecharPagamentoHoras()">Cancelar</button>
+        <button type="button" onclick="confirmarPagamentoHoras()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
