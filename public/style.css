@@ -1427,3 +1427,57 @@ button {
     padding: 18px;
   }
 }
+
+/* Conferencia antes de fechar a folha (public/conferencia.js) */
+.conferencia {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid #f2c94c;
+  border-radius: 10px;
+  background: #fffbeb;
+}
+
+.conferencia.ok {
+  border-color: #b7e4c7;
+  background: #f0fbf4;
+}
+
+.conferencia h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.conferencia h3 {
+  margin: 18px 0 4px;
+  font-size: 15px;
+}
+
+.conferencia-fonte {
+  margin: 6px 0 0;
+  color: #607086;
+}
+
+.conferencia-tabela {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.conferencia-tabela th,
+.conferencia-tabela td {
+  padding: 6px 8px;
+  border-top: 1px solid #f0e2b6;
+  text-align: left;
+  vertical-align: top;
+}
+
+.conferencia-tabela select {
+  max-width: 100%;
+}
+
+@media print {
+  #conferencia {
+    display: none;
+  }
+}

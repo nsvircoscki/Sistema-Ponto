@@ -349,15 +349,21 @@ function abrirAba(nome) {
   }
 }
 
+// Calculo do salario-base em public/calculoFolha.js (testado no Node).
 function horasTotaisRegistros(folha) {
-  return (folha.registros || []).reduce((total, registro) => total + Number(registro.horas || 0), 0);
+  return CalculoFolha.horasTotaisRegistros(folha);
 }
 
 function calcularResumoFuncionario(email, folha, funcionario, descontoManual) {
   const horas = horasTotaisRegistros(folha) + horasFeriadosPagosNoMes(funcionario);
   const salarioBase = Number(funcionario.salario || 0);
   const tipo = funcionario.tipo || "horista";
-  const salario = tipo === "mensalista" ? salarioMensalistaSemFerias(email, salarioBase) : horas * salarioBase;
+  const salario = CalculoFolha.salarioDoMes({
+    tipo,
+    salarioBase,
+    horas,
+    salarioMensalista: tipo === "mensalista" ? salarioMensalistaSemFerias(email, salarioBase) : 0,
+  });
   const abono = Number(funcionario.abono || 0);
   const alimentacao = Number(funcionario.valeAlimentacao || 0);
   const transporte = Number(funcionario.valeTransporte || 0);
@@ -434,8 +440,12 @@ async function gerarFolha() {
   document.getElementById("linksFolha").innerHTML = "";
   document.getElementById("folhaDocumentos").innerHTML = "";
 
+  document.getElementById("conferencia").innerHTML = "";
+
   try {
-    const res = await fetch(`http://localhost:3000/relatorio?mes=${mes}&ano=${ano}`);
+    const atualizar = usarDadosAtuaisNaProximaFolha ? "&atualizar=1" : "";
+    usarDadosAtuaisNaProximaFolha = false;
+    const res = await fetch(`http://localhost:3000/relatorio?mes=${mes}&ano=${ano}${atualizar}`);
     const data = await res.json();
 
     if (!res.ok) {
@@ -446,6 +456,10 @@ async function gerarFolha() {
     ultimaFolhaMes = mes;
     ultimaFolhaAno = ano;
     folhaSelecionada = "todos";
+
+    // Pendencias (sem saida, nao conciliados, aparelhos com ponto preso...)
+    // aparecem mesmo quando nenhum funcionario entrou na folha.
+    carregarConferencia(mes, ano);
 
     const emails = Object.keys(data);
     if (emails.length === 0) {
@@ -1863,6 +1877,13 @@ function salvarFolhaAtual(automatico = false) {
   const historico = carregarHistorico();
   const chave = chaveFolha();
 
+  // Conferencia antes de fechar: pendencias precisam de confirmacao explicita.
+  const pendencias = resumoPendenciasConferencia();
+  if (pendencias && !automatico) {
+    const confirmar = confirm(`Ha pendencias na conferencia deste mes:\n${pendencias}\n\nFechar a folha mesmo assim?`);
+    if (!confirmar) return false;
+  }
+
   if (historico[chave] && !automatico) {
     const confirmar = confirm("Ja existe uma folha salva para este mes. Deseja substituir?");
     if (!confirmar) return false;
@@ -1877,6 +1898,9 @@ function salvarFolhaAtual(automatico = false) {
 
   historico[chave] = criarSnapshotFolha(bancoHorasJaAplicado || deveAplicarBancoHoras);
   gravarHistorico(historico);
+  // Copia dos pontos usados (CSV) no banco local: correcao posterior na fonte
+  // nao muda esta folha sem aviso.
+  registrarFechamentoFolha(chave);
   document.getElementById("resultado").insertAdjacentHTML("afterbegin", '<p class="status saved">Folha salva no historico.</p>');
   renderizarFuncionarios();
   renderizarLinksFolha();

@@ -1,25 +1,20 @@
-const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
+const { obterPontos } = require("./fontesPontos");
 
-try {
-  process.loadEnvFile(path.join(__dirname, ".env"));
-} catch {
-  // Sem .env: usa apenas as variaveis de ambiente do sistema
+const CAMINHO_DADOS = path.join(__dirname, "dados.csv");
+
+// Baixa os pontos da fonte configurada (FONTE_PONTOS: planilha do Google ou
+// CCF) e guarda uma copia em dados.csv. mes/ano so sao usados pelo CCF (a
+// planilha sempre vem inteira).
+// Retorna { csv, origem, baixadoEm, sha256 }.
+async function baixarPlanilha({ mes, ano } = {}) {
+  const pontos = await obterPontos({ mes, ano });
+
+  fs.writeFileSync(CAMINHO_DADOS, pontos.csv);
+
+  console.log(`Pontos baixados com sucesso (fonte: ${pontos.origem}).`);
+  return pontos;
 }
 
-async function baixarPlanilha() {
-  const url = process.env.PLANILHA_URL;
-
-  if (!url) {
-    throw new Error("PLANILHA_URL nao definida. Configure o arquivo .env (veja .env.example).");
-  }
-
-  const response = await axios.get(url);
-
-  fs.writeFileSync("./dados.csv", response.data);
-
-  console.log("Planilha baixada com sucesso!");
-}
-
-module.exports = { baixarPlanilha };
+module.exports = { baixarPlanilha, CAMINHO_DADOS };

@@ -1,0 +1,7 @@
+O,Name,Time In,Time Out,Total Hours,Hourly Wage,Total Wages,CCF ID,Observacao
+,ana@empresa.com,10/1/2026 8:00:00,10/1/2026 12:00:00,4.00,,0,ccf-user-ana,
+,ana@empresa.com,10/1/2026 13:00:00,10/1/2026 17:30:00,4.50,,0,ccf-user-ana,
+,ana@empresa.com,10/2/2026 8:00:00,,,,0,ccf-user-ana,SEM_SAIDA
+,bruno@empresa.com,10/1/2026 8:00:00,,,,0,ccf-user-bruno,SEM_SAIDA
+,bruno@empresa.com,10/1/2026 8:02:00,10/1/2026 12:00:00,3.97,,0,ccf-user-bruno,INCONSISTENTE:ENTRADA_SEGUIDA
+,novo@empresa.com,10/1/2026 9:00:00,10/1/2026 10:00:00,1.00,,0,ccf-user-novo,

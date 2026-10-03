@@ -77,4 +77,42 @@ function calcularHoras(registros, mes, ano) {
   return resultado;
 }
 
-module.exports = { calcularHoras };
+// Linhas do mes que precisam de conferencia antes de fechar a folha. Nada e
+// descartado em silencio: o calcularHoras ignora linha sem entrada valida e
+// conta 0h para linha sem saida; aqui elas aparecem com o motivo.
+// O mes da linha e o da entrada; sem entrada valida, o da saida.
+function listarPendenciasRegistros(registros, mes, ano) {
+  const pendencias = [];
+  const mesFiltro = Number(mes);
+  const anoFiltro = Number(ano);
+
+  registros.forEach((r) => {
+    const entrada = r.entrada ? lerData(r.entrada) : null;
+    const saida = r.saida ? lerData(r.saida) : null;
+    const referencia = entrada?.isValid() ? entrada : (saida?.isValid() ? saida : null);
+
+    if (referencia) {
+      if (mesFiltro && referencia.month() + 1 !== mesFiltro) return;
+      if (anoFiltro && referencia.year() !== anoFiltro) return;
+    }
+
+    const motivos = [];
+    if (!r.email) motivos.push("SEM_EMAIL");
+    if (!r.entrada) motivos.push("SEM_ENTRADA");
+    else if (!entrada.isValid()) motivos.push("ENTRADA_INVALIDA");
+    if (!r.saida) motivos.push("SEM_SAIDA");
+    else if (!saida.isValid()) motivos.push("SAIDA_INVALIDA");
+    if (entrada?.isValid() && saida?.isValid() && saida.isBefore(entrada)) motivos.push("SAIDA_ANTES_DA_ENTRADA");
+    String(r.observacao || "").split(";").filter(Boolean).forEach((obs) => {
+      if (!motivos.includes(obs)) motivos.push(obs);
+    });
+
+    if (motivos.length) {
+      pendencias.push({ email: r.email || "", ccfId: r.ccfId || null, entrada: r.entrada || "", saida: r.saida || "", motivos });
+    }
+  });
+
+  return pendencias;
+}
+
+module.exports = { calcularHoras, listarPendenciasRegistros, lerData };

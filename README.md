@@ -62,16 +62,95 @@ Toda vez que um relatório é gerado, o sistema baixa a planilha e salva uma có
 
 As datas devem estar no formato `M/D/YYYY H:mm:ss`, por exemplo `11/27/2023 13:00:59`.
 
+> Na planilha, a coluna `Name` é o **e-mail** do funcionário (é a chave do cadastro local) e `Total Wages` é o **código de ocorrência**, não dinheiro:
+> 1 = esquecimento, 2 = atestado, 3 = férias, 4 = sem intervalo, 5 = outros, 6 = falta.
+> `Hourly Wage` e `Total Hours` não são usados: o valor da hora vem sempre do cadastro local.
+
+## Pontos vindos do CCF (em validação)
+
+O CCF pode substituir a planilha como fonte dos pontos. **O CCF não conhece salário**: ele só manda as batidas. Salário, descontos, férias, 13º e o histórico continuam só neste computador.
+
+O fluxo do Google Sheets continua sendo o padrão. Para testar o CCF, configure no `.env`:
+
+```
+FONTE_PONTOS=ccf
+CCF_PONTO_URL=https://ccf.seudominio.com.br/api/sis-ponto
+CCF_EXPORT_TOKEN=<token configurado no CCF>
+```
+
+Para voltar à planilha, use `FONTE_PONTOS=sheets` ou apague a linha.
+
+**O que muda com `FONTE_PONTOS=ccf`:**
+
+- **Fonte dos pontos:** o sistema busca `export.csv?mes=YYYY-MM` no CCF (para o 13º, `?ano=YYYY`).
+  - O CSV tem as mesmas colunas da planilha, mais `CCF ID` e `Observacao`.
+  - `Hourly Wage` vem vazio e `Total Wages` vem como `0`.
+- **Vínculo de funcionários:** é feito pelo **ID do CCF**, não pelo nome, e fica na tabela `vinculo_ccf`.
+  - Na primeira vez, a seção **Conferência** (abaixo de "Gerar Folha") lista os funcionários do CCF ainda não vinculados.
+  - Ela sugere o cadastro local de mesmo e-mail; um clique em "Vincular" confirma.
+  - **Pontos de quem não está vinculado ficam fora da folha** e aparecem como pendência. Eles não são ignorados em silêncio.
+- **Conferência antes de fechar:** ao clicar em "Salvar", se houver pendência, o sistema pede confirmação. Contam como pendência:
+  - entrada sem saída, saída sem entrada ou sequência inconsistente;
+  - funcionário não vinculado;
+  - funcionário com salário zerado;
+  - aparelho com ponto ainda não enviado ao CCF.
+- **Fechamento:** ao salvar a folha, uma cópia dos pontos usados é gravada na tabela `folha_fechamento`.
+  - Gerar de novo um mês fechado usa essa cópia.
+  - Se os pontos mudaram depois no CCF (ou na planilha), a conferência avisa e oferece "Usar dados atuais". Para valer, a folha precisa ser salva de novo.
+- **Auditoria:** as alterações abaixo ficam na tabela `auditoria`, com quem, quando, valor antigo e valor novo. Para consultar: `GET /api/auditoria`.
+  - salário, tipo, abono e vales do funcionário;
+  - descontos;
+  - vínculos;
+  - folhas salvas, substituídas ou apagadas;
+  - fechamentos.
+
+  "Quem" é o `OPERADOR_FOLHA` do `.env` ou, sem ele, o usuário do Windows.
+
+## Testes
+
+```
+npm test
+```
+
+Os testes cobrem:
+- leitura do CSV do CCF e da planilha;
+- conciliação por ID;
+- pendências (sem saída, sem entrada, inconsistente);
+- cálculo do salário com o valor da hora local, ignorando `Hourly Wage`;
+- auditoria e fechamento;
+- busca no CCF com token.
+
+Eles usam um banco temporário e nunca tocam no `sis-ponto.db`.
+
+## Segurança do PC da folha
+
+Este computador guarda salários e dados pessoais (LGPD).
+
+- **Disco criptografado** com BitLocker (Windows Pro). A chave de recuperação fica guardada fora da máquina.
+- **Conta do Windows com senha forte**, bloqueio automático de tela e **acesso físico restrito** à máquina.
+- **Backup criptografado e periódico**, guardado fora da máquina (outro disco ou nuvem, com criptografia), de:
+  - `sis-ponto.db`;
+  - `.env`;
+  - modelos `.docx`;
+  - recibos gerados.
+- **Teste de restauração** periódico: restaurar o backup em outra pasta, abrir o sistema e conferir uma folha antiga.
+- **Responsável substituto definido:** quem opera a folha na ausência do responsável, com acesso documentado ao backup e à senha. O `OPERADOR_FOLHA` dessa pessoa deve ser diferente, para a auditoria distinguir quem fez cada alteração.
+- O `CCF_EXPORT_TOKEN` dá leitura de todos os pontos. Se vazar, troque no CCF (`PONTO_EXPORT_TOKENS`) e aqui.
+- O servidor deste sistema só precisa responder em `localhost`. O CCF **não** acessa este computador.
+
 ## Estrutura
 
 | Arquivo | Função |
 |---|---|
 | `index.js` | Servidor Express com as rotas da API |
-| `baixarplanilha.js` | Baixa a planilha usando o link definido no `.env` |
-| `lerCSV.js` | Lê o `dados.csv` |
-| `calculo.js` | Calcula as horas e as ocorrências de cada funcionário no mês |
+| `fontesPontos/` | De onde vêm os pontos: planilha do Google ou CCF (`FONTE_PONTOS`) |
+| `baixarplanilha.js` | Baixa os pontos da fonte configurada e grava `dados.csv` |
+| `lerCSV.js` | Lê o CSV de pontos |
+| `calculo.js` | Calcula as horas e as ocorrências de cada funcionário no mês, e lista as pendências |
+| `conciliacao.js` | Liga o funcionário do CCF (ID) ao cadastro local (e-mail) |
+| `auditoria.js` | Decide o que vai para o log de auditoria |
 | `database.js` | Banco SQLite local (`sis-ponto.db`), criado automaticamente |
-| `public/` | Interface web (dashboard) |
+| `public/` | Interface web (dashboard); `conferencia.js` e `calculoFolha.js` |
 
 ## Arquivos que não vão para o repositório
 
