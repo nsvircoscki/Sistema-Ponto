@@ -2,6 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const { parse } = require("csv-parse/sync");
 
+// Exportacoes do Excel em portugues costumam vir com ";". Decide pelo
+// cabecalho (a coluna Observacao pode ter ";" dentro dos dados).
+function detectarSeparador(texto) {
+  const cabecalho = String(texto).replace(/^﻿/, "").split(/\r?\n/, 1)[0];
+  return cabecalho.includes(";") && !cabecalho.includes(",") ? ";" : ",";
+}
+
 // Colunas lidas pelo NOME do cabecalho: colunas extras sao ignoradas.
 //   Planilha do Google: O, Name (e-mail), Time In, Time Out, ..., Total Wages (codigo de ocorrencia)
 //   CCF: as mesmas + "CCF ID" (id do funcionario no CCF) e "Observacao"
@@ -11,6 +18,7 @@ function lerTextoCSV(texto) {
     columns: true,
     skip_empty_lines: true,
     bom: true,
+    delimiter: detectarSeparador(texto),
   });
 
   return registros.map((row) => ({
@@ -25,7 +33,7 @@ function lerTextoCSV(texto) {
 }
 
 function lerCSV(caminho = path.join(__dirname, "dados.csv")) {
-  return lerTextoCSV(fs.readFileSync(caminho));
+  return lerTextoCSV(fs.readFileSync(caminho, "utf8"));
 }
 
-module.exports = { lerCSV, lerTextoCSV };
+module.exports = { lerCSV, lerTextoCSV, detectarSeparador };

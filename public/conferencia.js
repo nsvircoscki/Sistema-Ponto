@@ -75,7 +75,7 @@ function renderizarConferencia() {
   }
 
   const partes = [];
-  const fonte = c.origem === "ccf" ? "CCF" : "Planilha do Google";
+  const fonte = { ccf: "CCF", arquivo: "CSV importado do SisCCF" }[c.origem] || "Planilha do Google";
   partes.push(`<p class="conferencia-fonte">Pontos: <b>${fonte}</b>${c.baixadoEm ? ` · obtidos em ${new Date(c.baixadoEm).toLocaleString("pt-BR")}` : ""}</p>`);
 
   if (c.usandoCopiaDaFolhaFechada) {

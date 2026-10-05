@@ -73,6 +73,12 @@
           <button id="botaoGerarFolha" type="button" onclick="gerarFolha()">Gerar Folha</button>
         </div>
 
+        <div id="importarPontos" class="importar-pontos" hidden>
+          <input type="file" id="arquivoPontos" accept=".csv,text/csv" hidden onchange="importarCsvPontos(this)">
+          <button class="secondary-button" type="button" onclick="document.getElementById('arquivoPontos').click()">Importar CSV do SisCCF</button>
+          <span id="statusImportacao" class="status"></span>
+        </div>
+
         <div id="linksFolha" class="sheet-links"></div>
         <div id="conferencia"></div>
         <div id="resultado" class="results"></div>
@@ -294,6 +300,7 @@
 
   <script src="calculoFolha.js"></script>
   <script src="conferencia.js"></script>
+  <script src="importarPontos.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

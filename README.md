@@ -66,6 +66,27 @@ As datas devem estar no formato `M/D/YYYY H:mm:ss`, por exemplo `11/27/2023 13:0
 > 1 = esquecimento, 2 = atestado, 3 = férias, 4 = sem intervalo, 5 = outros, 6 = falta.
 > `Hourly Wage` e `Total Hours` não são usados: o valor da hora vem sempre do cadastro local.
 
+## Importar o CSV exportado do SisCCF
+
+Se você exporta o relatório de pontos do SisCCF e quer subir o arquivo na mão, configure no `.env`:
+
+```
+FONTE_PONTOS=arquivo
+```
+
+Depois reinicie o sistema. Na aba **Folha**:
+
+1. Escolha o mês e o ano.
+2. Clique em **Importar CSV do SisCCF** e selecione o arquivo exportado. A folha é gerada logo em seguida.
+
+Como funciona:
+
+- O arquivo fica guardado no banco local (tabela `pontos_importados`), **um por mês**. Importar de novo o mesmo mês substitui o anterior, e cada importação fica na auditoria.
+- O sistema recusa um arquivo sem nenhum ponto do mês escolhido, para evitar importar no mês errado.
+- O CSV pode ser separado por vírgula ou ponto e vírgula, em UTF-8 ou no padrão do Excel (Windows-1252). As colunas são as mesmas do export do CCF descritas abaixo, incluindo `CCF ID` e `Observacao`.
+- Para o 13º, o sistema junta os meses importados do ano.
+- Vínculo de funcionários, conferência e fechamento funcionam como na seção abaixo. Só a lista de aparelhos com pontos pendentes não aparece, porque ela não vem no arquivo.
+
 ## Pontos vindos do CCF (em validação)
 
 O CCF pode substituir a planilha como fonte dos pontos. **O CCF não conhece salário**: ele só manda as batidas. Salário, descontos, férias, 13º e o histórico continuam só neste computador.

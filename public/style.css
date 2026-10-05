@@ -1481,3 +1481,19 @@ button {
     display: none;
   }
 }
+
+.importar-pontos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: -6px 0 18px;
+}
+
+.importar-pontos[hidden] {
+  display: none;
+}
+
+.importar-pontos .status {
+  margin: 0;
+}

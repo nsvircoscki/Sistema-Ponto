@@ -445,7 +445,7 @@ async function gerarFolha() {
   try {
     const atualizar = usarDadosAtuaisNaProximaFolha ? "&atualizar=1" : "";
     usarDadosAtuaisNaProximaFolha = false;
-    const res = await fetch(`http://localhost:3000/relatorio?mes=${mes}&ano=${ano}${atualizar}`);
+    const res = await fetch(`/relatorio?mes=${mes}&ano=${ano}${atualizar}`);
     const data = await res.json();
 
     if (!res.ok) {
@@ -517,6 +517,8 @@ function atualizarModoGeracao() {
   const decimo = modoDecimoTerceiroSelecionado();
   const ano = document.getElementById("ano");
   const botao = document.getElementById("botaoGerarFolha");
+
+  atualizarImportacaoPontos();
 
   if (ano) {
     // Permite selecionar o ano mesmo em modo de férias ou quitação
@@ -1107,7 +1109,7 @@ function descontoTotalReciboDecimo(email, tipo, ano) {
 }
 
 async function buscarMesesDecimo(ano) {
-  const res = await fetch(`http://localhost:3000/decimo-terceiro/meses?ano=${ano}`);
+  const res = await fetch(`/decimo-terceiro/meses?ano=${ano}`);
   const data = await res.json();
 
   if (!res.ok) {
@@ -1278,7 +1280,7 @@ async function gerarRecibosFerias(tipo = modoDescontos === "quitacao" ? "quitaca
   document.getElementById("folhaDocumentos").innerHTML = "";
 
   try {
-    const res = await fetch("http://localhost:3000/recibos-ferias", {
+    const res = await fetch("/recibos-ferias", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ recibos, modelo: quitacao ? "quitacao-ferias" : "ferias" }),
@@ -1331,7 +1333,7 @@ async function gerarRecibosDecimo(tipo = modoReciboSelecionado()) {
     document.getElementById("linksFolha").innerHTML = "";
     document.getElementById("folhaDocumentos").innerHTML = "";
 
-    const res = await fetch("http://localhost:3000/recibos-ferias", {
+    const res = await fetch("/recibos-ferias", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ recibos, modelo: tipo }),

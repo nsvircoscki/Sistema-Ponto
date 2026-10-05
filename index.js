@@ -10,7 +10,7 @@ const { lerTextoCSV } = require("./lerCSV");
 const { calcularHoras, listarPendenciasRegistros, lerData } = require("./calculo");
 const { resolverRegistros } = require("./conciliacao");
 const { diffAuditoria, operadorAtual } = require("./auditoria");
-const { obterPontos, obterPendenciasFonte } = require("./fontesPontos");
+const { obterPontos, obterPendenciasFonte, nomeFonte, sha256 } = require("./fontesPontos");
 const {
   buscarTodosDados,
   buscarDado,
@@ -23,6 +23,8 @@ const {
   removerVinculo,
   buscarFechamento,
   salvarFechamento,
+  buscarPontosImportados,
+  salvarPontosImportados,
 } = require("./database");
 
 const app = express();
@@ -110,6 +112,57 @@ function diferencaPontos(csvAntigo, csvNovo, mes, ano) {
     removidas: [...antigo].filter((k) => !novo.has(k)).length,
   };
 }
+
+// Qual fonte esta ativa e, para FONTE_PONTOS=arquivo, o que ja foi importado no mes.
+app.get("/api/pontos/fonte", (req, res) => {
+  try {
+    const fonte = nomeFonte();
+    const importado = fonte === "arquivo" && req.query.mes && req.query.ano
+      ? buscarPontosImportados(chaveMes(req.query.mes, req.query.ano))
+      : null;
+    res.json({
+      fonte,
+      importado: importado ? { nomeArquivo: importado.nome_arquivo, importadoEm: importado.importado_em, importadoPor: importado.importado_por } : null,
+    });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+// Recebe o CSV exportado do SisCCF (corpo da requisicao, texto) para o mes/ano.
+app.post("/api/pontos/importar", express.text({ type: "*/*", limit: "20mb" }), (req, res) => {
+  try {
+    if (nomeFonte() !== "arquivo") {
+      return res.status(400).json({ erro: "Para importar o CSV, configure FONTE_PONTOS=arquivo no .env e reinicie o sistema." });
+    }
+    const mes = Number(req.query.mes);
+    const ano = Number(req.query.ano);
+    if (!(mes >= 1 && mes <= 12) || !ano) return res.status(400).json({ erro: "Escolha o mes e o ano antes de importar." });
+
+    const csv = String(req.body || "");
+    let registros;
+    try {
+      registros = lerTextoCSV(csv);
+    } catch (err) {
+      return res.status(400).json({ erro: `Nao foi possivel ler o CSV: ${err.message}` });
+    }
+    if (!registros.length) return res.status(400).json({ erro: "O arquivo nao tem nenhuma linha de ponto." });
+    if (!registros.some((r) => r.email && (r.entrada || r.saida))) {
+      return res.status(400).json({ erro: "Nao encontrei as colunas de ponto (Name/Email, Time In/Entrada, Time Out/Saida) no arquivo." });
+    }
+
+    const linhasDoMes = registrosDoMes(registros, mes, ano).length;
+    if (!linhasDoMes) {
+      return res.status(400).json({ erro: `O arquivo nao tem nenhum ponto de ${String(mes).padStart(2, "0")}/${ano}. Confira o mes escolhido.` });
+    }
+
+    salvarPontosImportados({ mes: chaveMes(mes, ano), csv, sha256: sha256(csv), nomeArquivo: req.query.arquivo, quem: operadorAtual() });
+    res.json({ sucesso: true, linhas: registros.length, linhasDoMes });
+  } catch (err) {
+    console.error("Erro ao importar pontos:", err);
+    res.status(500).json({ erro: err.message || "Erro ao importar pontos" });
+  }
+});
 
 app.get("/relatorio", async (req, res) => {
   try {

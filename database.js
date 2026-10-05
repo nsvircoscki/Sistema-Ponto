@@ -38,6 +38,19 @@ db.exec(`
   )
 `);
 
+// CSV de pontos importado pela tela (FONTE_PONTOS=arquivo), um por mes
+// ("YYYY-MM"). Importar de novo o mesmo mes substitui o anterior.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS pontos_importados (
+    mes TEXT PRIMARY KEY,
+    csv TEXT NOT NULL,
+    sha256 TEXT NOT NULL,
+    nome_arquivo TEXT,
+    importado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    importado_por TEXT
+  )
+`);
+
 // Log de alteracoes de salario, descontos, vinculos e fechamento de folha.
 db.exec(`
   CREATE TABLE IF NOT EXISTS auditoria (
@@ -201,6 +214,37 @@ function salvarFechamento({ mes, origem, csv, sha256, baixadoEm, quem }) {
   }
 }
 
+function buscarPontosImportados(mes) {
+  return db.prepare("SELECT * FROM pontos_importados WHERE mes = ?").get(mes) || null;
+}
+
+function listarPontosImportadosDoAno(ano) {
+  return db.prepare("SELECT * FROM pontos_importados WHERE mes LIKE ? ORDER BY mes").all(`${ano}-%`);
+}
+
+function salvarPontosImportados({ mes, csv, sha256, nomeArquivo, quem }) {
+  const anterior = buscarPontosImportados(mes);
+  db.exec("BEGIN");
+  try {
+    db.prepare(`
+      INSERT INTO pontos_importados (mes, csv, sha256, nome_arquivo, importado_por) VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(mes) DO UPDATE SET csv = excluded.csv, sha256 = excluded.sha256, nome_arquivo = excluded.nome_arquivo,
+        importado_em = CURRENT_TIMESTAMP, importado_por = excluded.importado_por
+    `).run(mes, csv, sha256, nomeArquivo || null, quem || null);
+    registrarAuditoria({
+      quem,
+      acao: "pontos_importados",
+      chave: mes,
+      valorAntigo: anterior ? { arquivo: anterior.nome_arquivo, sha256: anterior.sha256, importadoEm: anterior.importado_em } : null,
+      valorNovo: { arquivo: nomeArquivo || null, sha256 },
+    });
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
+}
+
 module.exports = {
   buscarTodosDados,
   buscarDado,
@@ -214,4 +258,7 @@ module.exports = {
   removerVinculo,
   buscarFechamento,
   salvarFechamento,
+  buscarPontosImportados,
+  listarPontosImportadosDoAno,
+  salvarPontosImportados,
 };
