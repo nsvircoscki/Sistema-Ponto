@@ -157,7 +157,8 @@ Este computador guarda salários e dados pessoais (LGPD).
 - **Teste de restauração** periódico: restaurar o backup em outra pasta, abrir o sistema e conferir uma folha antiga.
 - **Responsável substituto definido:** quem opera a folha na ausência do responsável, com acesso documentado ao backup e à senha. O `OPERADOR_FOLHA` dessa pessoa deve ser diferente, para a auditoria distinguir quem fez cada alteração.
 - O `CCF_EXPORT_TOKEN` dá leitura de todos os pontos. Se vazar, troque no CCF (`PONTO_EXPORT_TOKENS`) e aqui.
-- O servidor deste sistema só precisa responder em `localhost`. O CCF **não** acessa este computador.
+- O servidor deste sistema só responde em `localhost` (`HOST=127.0.0.1`, padrão): outros computadores da rede não acessam. O CCF **não** acessa este computador.
+- A API não libera CORS: um site aberto no navegador deste PC não consegue ler os dados da folha.
 
 ## Estrutura
 

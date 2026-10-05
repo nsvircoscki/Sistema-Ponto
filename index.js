@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const PizZip = require("pizzip");
@@ -29,8 +28,10 @@ const {
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+// Sem CORS de propósito: as telas são servidas por este mesmo servidor, e com
+// cors() aberto qualquer site aberto no navegador deste PC conseguia ler os
+// salários pela API. Pelo mesmo motivo o servidor só escuta no próprio PC.
+app.use(express.json({ limit: "10mb" }));
 
 app.get("/", (req, res) => res.redirect("/dashboard.html"));
 
@@ -394,6 +395,9 @@ app.post("/recibos-ferias", (req, res) => {
 
 const PORT = Number(process.env.PORT) || 3000;
 
-app.listen(PORT, () => {
+// HOST=127.0.0.1 (padrão): só este computador acessa. Outro valor (ex.:
+// 0.0.0.0) abre para a rede — só faça isso se souber quem está nela.
+const HOST = process.env.HOST || "127.0.0.1";
+app.listen(PORT, HOST, () => {
   console.log(`Servidor rodando em: http://localhost:${PORT}`);
 });
