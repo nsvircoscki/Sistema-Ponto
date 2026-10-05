@@ -14,6 +14,7 @@ const ROTULOS_PENDENCIA = {
   SAIDA_ANTES_DA_ENTRADA: "Saida antes da entrada",
   "INCONSISTENTE:ENTRADA_SEGUIDA": "Duas entradas seguidas (CCF)",
   "INCONSISTENTE:SAIDA_SEM_ENTRADA": "Saida fora de sequencia (CCF)",
+  PREVISTA_PENDENTE: "Esqueceu de bater: aguardando o ENG abonar ou marcar falta (CCF)",
 };
 
 function escaparHtml(texto) {

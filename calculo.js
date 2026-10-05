@@ -7,6 +7,11 @@ function lerData(valor) {
   return dayjs(valor, ["M/D/YYYY H:mm:ss", "M/D/YYYY HH:mm:ss", "YYYY-MM-DD HH:mm:ss"], true);
 }
 
+const observacoes = (texto) => String(texto || "").split(";").filter(Boolean);
+const naoContaHoras = (texto) => observacoes(texto).some((obs) => obs === "FALTA" || obs === "PREVISTA_PENDENTE");
+// Ja decididas pelo ENG no CCF: informativas, nao sao pendencia.
+const OBSERVACOES_RESOLVIDAS = ["FALTA", "PREVISTA_ABONADA"];
+
 function calcularHoras(registros, mes, ano) {
   const resultado = {};
   const mesFiltro = Number(mes);
@@ -52,7 +57,9 @@ function calcularHoras(registros, mes, ano) {
       const saida = lerData(r.saida);
 
       if (saida.isValid()) {
-        const horas = saida.diff(entrada, "minute") / 60;
+        // CCF: falta marcada pelo ENG, ou horario previsto (esquecimento) ainda
+        // sem decisao, nao conta horas. O horario fica registrado na folha.
+        const horas = naoContaHoras(r.observacao) ? 0 : saida.diff(entrada, "minute") / 60;
         resultado[r.email].horas += horas;
         registroDia.saida = saida.format("HH:mm");
         registroDia.horas = horas;
@@ -103,8 +110,8 @@ function listarPendenciasRegistros(registros, mes, ano) {
     if (!r.saida) motivos.push("SEM_SAIDA");
     else if (!saida.isValid()) motivos.push("SAIDA_INVALIDA");
     if (entrada?.isValid() && saida?.isValid() && saida.isBefore(entrada)) motivos.push("SAIDA_ANTES_DA_ENTRADA");
-    String(r.observacao || "").split(";").filter(Boolean).forEach((obs) => {
-      if (!motivos.includes(obs)) motivos.push(obs);
+    observacoes(r.observacao).forEach((obs) => {
+      if (!motivos.includes(obs) && !OBSERVACOES_RESOLVIDAS.includes(obs)) motivos.push(obs);
     });
 
     if (motivos.length) {
